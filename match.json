@@ -3,7 +3,11 @@
 "match":
 	{
 	"date":"{{match.date}}",
-	"field":"{{match.field}}",
+	"field":
+		{
+			"name":"{{field.name}}",
+			"location":"{{field.location}}"
+		},
 	"home":"{{match.home}}",
 	"away":"{{match.away}}",
 	"referees":[

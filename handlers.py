@@ -45,9 +45,14 @@ class Index(BaseHandler):
 		ref.name= 'Frank'
 		ref_keys.append(ref.put())
 
+		field = match.Field()
+		field.name = "Tryon Field"
+		field.location = "Memorial Field, Rutherford NJ"
+		field_key = field.put()
+
 		m = match.Match()
 		m.date = datetime.datetime.now()
-		m.field = "Tryon Field"
+		m.field = field_key
 		m.home = "Rutherford"
 		m.away = "Worcester"
 		m.referees = ref_keys
@@ -56,6 +61,7 @@ class Index(BaseHandler):
 		refs = [ref.get() for ref in m.referees]
 
 		template_values = {"match":m}
+		template_values["field"] = m.field.get()
 		template_values["referees"] = refs
 		template = JINJA_ENVIRONMENT.get_template('match.json')
 		self.response.write(template.render(template_values))
