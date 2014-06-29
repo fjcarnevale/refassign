@@ -1,0 +1,19 @@
+{% autoescape true %}
+{
+"match":
+	{
+	"date":"{{match.date}}",
+	"field":"{{match.field}}",
+	"home":"{{match.home}}",
+	"away":"{{match.away}}",
+	"referees":[
+			{% for ref in referees %}
+				{
+				"name":"{{ref.name}}"
+				}
+			{% if not loop.last %},{% endif %}
+			{% endfor %}
+		]
+	}
+}
+{% endautoescape %}
