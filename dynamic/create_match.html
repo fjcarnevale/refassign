@@ -1,0 +1,37 @@
+{% autoescape true %}
+<html>
+<body>
+Create a Match
+<form action="/add_match" method="get">
+
+Date: <input type="datetime-local" name="date"><br />
+
+Team 1: <select name="team">
+{% for team in teams %}
+<option value="{{team.key.urlsafe()}}">{{team.name}}</option>
+{% endfor %}
+</select><br />
+
+Team 2: <select name="team">
+{% for team in teams %}
+<option value="{{team.key.urlsafe()}}">{{team.name}}</option>
+{% endfor %}
+</select><br />
+
+<select name="ref">
+{% for ref in refs %}
+<option value="{{ref.key.urlsafe()}}">{{ref.name}}</option>
+{% endfor %}
+</select><br />
+
+<select name="field">
+{% for field in fields %}
+<option value="{{field.key.urlsafe()}}">{{field.name}}</option>
+{% endfor %}
+</select><br />
+
+<input type="Submit">
+</form>
+</body>
+</html>
+{% endautoescape %}
