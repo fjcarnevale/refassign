@@ -37,39 +37,99 @@ class BaseHandler(webapp2.RequestHandler):
 class Index(BaseHandler):
 	""" Handles requests to the main page """
 	def get(self):
-		ref = match.Referee()
-		ref.name = 'Kristin'
-		ref_keys = [ref.put()]
+		matches = match.Match.query()
 
-		ref = match.Referee()
-		ref.name= 'Frank'
-		ref_keys.append(ref.put())
+		
+class AddTeam(BaseHandler):
+	def get(self):
+		team = match.Team()
+		team.name = self.request.get("name")
+		team.put()
+		
+		self.response.write("Created team %s" % team.name)
 
+class AddRef(BaseHandler):
+	def get(self):
+		ref = match.Referee()
+		ref.name = self.request.get("name")
+		ref.email = self.request.get("email")
+		ref.grade = int(self.request.get("grade"))
+		
+		leagues = [ndb.Key(urlsafe=league) for league in self.request.get("league", allow_multiple=True)]
+
+		ref.leagues = leagues
+		ref.put()
+		
+		self.response.write("Created ref %s" % ref.name)
+
+class AddField(BaseHandler):
+	def get(self):
 		field = match.Field()
-		field.name = "Tryon Field"
-		field.location = "Memorial Field, Rutherford NJ"
-		field_key = field.put()
+		field.name = self.request.get("name")
+		field.location = self.request.get("location")
+		field.put()
+		
+		self.response.write("Created field %s at %s" % (field.name, field.location))
 
+class AddLeague(BaseHandler):
+	def get(self):
+		league = match.League()
+		league.name = self.request.get("name")
+		league.put()		
+
+		self.response.write("Created league %s" % league.name)
+
+class AddMatch(BaseHandler):
+	def get(self):
 		m = match.Match()
-		m.date = datetime.datetime.now()
-		m.field = field_key
-		m.home = "Rutherford"
-		m.away = "Worcester"
-		m.referees = ref_keys
-		match_key = m.put()
+		m.date = datetime.datetime.strptime(self.request.get("date"), "%Y-%m-%dT%H:%M")
+		
+		team_keys = self.request.get('team', allow_multiple=True)
+
+		for tk in team_keys:
+			m.teams.append(ndb.Key(urlsafe=tk))
+
+		ref_key = self.request.get('ref')
+		m.referees.append(ndb.Key(urlsafe=ref_key))		
+
+		field_key = self.request.get('field')
+		m.field = ndb.Key(urlsafe=field_key)
 
 		refs = [ref.get() for ref in m.referees]
+		teams = [team.get() for team in m.teams]
 
-		template_values = {"match":m}
-		template_values["field"] = m.field.get()
-		template_values["referees"] = refs
+		template_values = {"match":m, "referees":refs, "teams":teams, "field":m.field.get()}
 		template = JINJA_ENVIRONMENT.get_template('match.json')
 		self.response.write(template.render(template_values))
+
+class CreateRef(BaseHandler):
+	def get(self):
+		leagues = match.League.query()
+
+		template_values = {"leagues":leagues}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/create_ref.html')
+		self.response.write(template.render(template_values))
+
+class CreateMatch(BaseHandler):
+	def get(self):
+		teams = match.Team.query()
+		refs = match.Referee.query()
+		fields = match.Field.query()
+
+		template_values = {"teams":teams, "refs":refs, "fields":fields}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/create_match.html')
+		self.response.write(template.render(template_values))
+
+class GetReferees(BaseHandler):
+	def get(self):
+		league_key = self.request.get("league")
+		league = ndb.Key(urlsafe=league_key).get()
 		
+		refs = [ref.get() for ref in league.referees]
+
+		template_values = {"referees":refs}
+		template = JINJA_ENVIRONMENT.get_template('referee.json')
+		self.response.write(template.render(template_values))
 
 
 
-
-
-
-        
