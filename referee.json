@@ -1,0 +1,14 @@
+{% autoescape true %}
+{
+"referees":
+	[
+		{% for ref in referees %}
+			{
+			"name":"{{ref.name}}",
+			"grade":{{ref.grade}}
+			}
+		{% if not loop.last %},{% endif %}
+		{% endfor %}
+	]
+}
+{% endautoescape %}
