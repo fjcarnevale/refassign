@@ -44,9 +44,10 @@ class AddTeam(BaseHandler):
 	def get(self):
 		team = match.Team()
 		team.name = self.request.get("name")
+		team.league = ndb.Key(urlsafe = self.request.get("league"))
 		team.put()
 		
-		self.response.write("Created team %s" % team.name)
+		self.response.write("Created team %s in league %s" % (team.name, team.league.get().name))
 
 class AddRef(BaseHandler):
 	def get(self):
@@ -108,6 +109,14 @@ class CreateRef(BaseHandler):
 
 		template_values = {"leagues":leagues}
 		template = JINJA_ENVIRONMENT.get_template('dynamic/create_ref.html')
+		self.response.write(template.render(template_values))
+
+class CreateTeam(BaseHandler):
+	def get(self):
+		leagues = match.League.query()
+
+		template_values = {"leagues":leagues}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/create_team.html')
 		self.response.write(template.render(template_values))
 
 class CreateMatch(BaseHandler):

@@ -22,6 +22,7 @@ class League(ndb.Model):
 
 class Team(ndb.Model):
 	name = ndb.StringProperty()
+	league = ndb.KeyProperty()
 	matches = ndb.KeyProperty(repeated=True)
 
 class Match(ndb.Model):
