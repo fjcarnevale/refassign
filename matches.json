@@ -1,0 +1,41 @@
+{% autoescape true %}
+[
+
+{% for match_key in matches %}
+{% set match = match_key.get() %}
+
+{
+"match":
+	{
+	"date":"{{match.date}}",
+	"field":
+		{
+			{% set field = match.field.get() %}
+			"name":"{{field.name}}",
+			"location":"{{field.location}}"
+		},
+	"teams":[
+			{% for team_key in match.teams %}
+				{% set team = team_key.get() %}
+				{
+				"name":"{{team.name}}"
+				}
+			{% if not loop.last %},{% endif %}
+			{% endfor %}
+		],
+	"referees":[
+			{% for ref_key in match.referees %}
+				{% set ref = ref_key.get() %}
+				{
+				"name":"{{ref.name}}",
+				"grade":{{ref.grade}}
+				}
+			{% if not loop.last %},{% endif %}
+			{% endfor %}
+		]
+	}
+}
+{% if not loop.last %},{% endif %}
+{% endfor %}
+]
+{% endautoescape %}

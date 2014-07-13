@@ -42,18 +42,12 @@ class Index(BaseHandler):
 		
 class AddTeam(BaseHandler):
 	def get(self):
-		league_key = self.request.get("league")
+		league_key = ndb.Key(urlsafe = self.request.get("league"))
+		league = league_key.get()
 
-		team = match.Team()
-		team.name = self.request.get("name")
-		team.league = ndb.Key(urlsafe = league_key)
-		team_key = team.put()
-
-		league = team.league.get()
-		league.teams.append(team_key)
-		league.put()
+		team_key = league.add_new_team(self.request.get("name"))
 		
-		self.response.write("Created team %s in league %s" % (team.name, league.name))
+		self.response.write("Created team %s in league %s" % (self.request.get("name"), league.name))
 
 class AddRef(BaseHandler):
 	def get(self):
@@ -166,17 +160,9 @@ class GetMatches(BaseHandler):
 		# Hack to remove duplicates for now
 		matches = list(set(matches))
 
-		for match_key in matches:
-			m = match_key.get()
-
-			# TODO just pass the match,
-			# these can be retrieved using keys within the template
-			refs = [ref.get() for ref in m.referees]
-			teams = [team.get() for team in m.teams]
-
-			template_values = {"match":m, "referees":refs, "teams":teams, "field":m.field.get()}
-			template = JINJA_ENVIRONMENT.get_template('match.json')
-			self.response.write(template.render(template_values))
+		template_values = {"matches":matches}
+		template = JINJA_ENVIRONMENT.get_template('matches.json')
+		self.response.write(template.render(template_values))
 
 
 

@@ -23,10 +23,22 @@ class League(ndb.Model):
 	# maybe the league should also hold matches,
 	# otherwise may have to watch out for duplicates when retreiving from teams
 
+	def add_new_team(self, name):
+		team_key = Team.create_team(name, self)
+		self.teams.append(team_key)
+		self.put()
+		return team_key
+
 class Team(ndb.Model):
 	name = ndb.StringProperty()
 	league = ndb.KeyProperty()
 	matches = ndb.KeyProperty(repeated=True)
+
+	@staticmethod
+	def create_team(name,league):
+		team = Team()
+		team.populate(name = name, league = league.key)
+		return team.put()
 
 class Match(ndb.Model):
 	date = ndb.DateTimeProperty()
