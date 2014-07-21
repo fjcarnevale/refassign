@@ -15,6 +15,7 @@ class Field(ndb.Model):
 	name = ndb.StringProperty()
 	location = ndb.StringProperty()
 
+
 class League(ndb.Model):
 	name = ndb.StringProperty()
 	assigners = ndb.KeyProperty(repeated=True)
@@ -23,8 +24,16 @@ class League(ndb.Model):
 	# maybe the league should also hold matches,
 	# otherwise may have to watch out for duplicates when retreiving from teams
 
+	@staticmethod
+	def new_league(name, assigners=[], referees=[], teams=[]):
+		league = League()
+		league.populate(name=name, assigners=assigners, referees=referees, teams=teams)
+		return league
+
 	def add_new_team(self, name):
-		team_key = Team.create_team(name, self)
+		team = Team.new_team(name,self)
+		team_key = team.put()
+
 		self.teams.append(team_key)
 		self.put()
 		return team_key
@@ -35,10 +44,10 @@ class Team(ndb.Model):
 	matches = ndb.KeyProperty(repeated=True)
 
 	@staticmethod
-	def create_team(name,league):
+	def new_team(name, league):
 		team = Team()
 		team.populate(name = name, league = league.key)
-		return team.put()
+		return team
 
 class Match(ndb.Model):
 	date = ndb.DateTimeProperty()

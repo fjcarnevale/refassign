@@ -74,8 +74,7 @@ class AddField(BaseHandler):
 
 class AddLeague(BaseHandler):
 	def get(self):
-		league = match.League()
-		league.name = self.request.get("name")
+		league = match.League.new_league(self.request.get("name"))
 		league.put()		
 
 		self.response.write("Created league %s" % league.name)
@@ -134,6 +133,14 @@ class CreateMatch(BaseHandler):
 
 		template_values = {"teams":teams, "refs":refs, "fields":fields}
 		template = JINJA_ENVIRONMENT.get_template('dynamic/create_match.html')
+		self.response.write(template.render(template_values))
+
+class ViewMatches(BaseHandler):
+	def get(self):
+		leagues = match.League.query()
+
+		template_values = {"leagues":leagues}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/view_matches.html')
 		self.response.write(template.render(template_values))
 
 class GetReferees(BaseHandler):

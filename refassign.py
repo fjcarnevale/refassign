@@ -16,6 +16,7 @@ application = webapp2.WSGIApplication([
 	('/dynamic/create_match.html', handlers.CreateMatch),
 	('/dynamic/create_ref.html', handlers.CreateRef),
 	('/dynamic/create_team.html', handlers.CreateTeam),
+	('/dynamic/view_matches.html', handlers.ViewMatches),
 	('/get_referees', handlers.GetReferees),
 	('/get_matches', handlers.GetMatches)
 ], config=config, debug=True)
