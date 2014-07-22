@@ -39,6 +39,48 @@ class Index(BaseHandler):
 	def get(self):
 		matches = match.Match.query()
 
+class CreateRef(BaseHandler):
+	def get(self):
+		leagues = match.League.query()
+
+		template_values = {"leagues":leagues}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/create_ref.html')
+		self.response.write(template.render(template_values))
+
+class CreateTeam(BaseHandler):
+	def get(self):
+		leagues = match.League.query()
+
+		template_values = {"leagues":leagues}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/create_team.html')
+		self.response.write(template.render(template_values))
+
+class CreateMatch(BaseHandler):
+	def get(self):
+		teams = match.Team.query()
+		refs = match.Referee.query()
+		fields = match.Field.query()
+
+		template_values = {"teams":teams, "refs":refs, "fields":fields}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/create_match.html')
+		self.response.write(template.render(template_values))
+
+class ViewLeagues(BaseHandler):
+	def get(self):
+		leagues = match.League.query()
+
+		template_values = {"leagues":leagues}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/view_leagues.html')
+		self.response.write(template.render(template_values))
+
+class ViewMatches(BaseHandler):
+	def get(self):
+		leagues = match.League.query()
+
+		template_values = {"leagues":leagues}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/view_matches.html')
+		self.response.write(template.render(template_values))
+
 		
 class AddTeam(BaseHandler):
 	def get(self):
@@ -109,40 +151,6 @@ class AddMatch(BaseHandler):
 		template = JINJA_ENVIRONMENT.get_template('match.json')
 		self.response.write(template.render(template_values))
 
-class CreateRef(BaseHandler):
-	def get(self):
-		leagues = match.League.query()
-
-		template_values = {"leagues":leagues}
-		template = JINJA_ENVIRONMENT.get_template('dynamic/create_ref.html')
-		self.response.write(template.render(template_values))
-
-class CreateTeam(BaseHandler):
-	def get(self):
-		leagues = match.League.query()
-
-		template_values = {"leagues":leagues}
-		template = JINJA_ENVIRONMENT.get_template('dynamic/create_team.html')
-		self.response.write(template.render(template_values))
-
-class CreateMatch(BaseHandler):
-	def get(self):
-		teams = match.Team.query()
-		refs = match.Referee.query()
-		fields = match.Field.query()
-
-		template_values = {"teams":teams, "refs":refs, "fields":fields}
-		template = JINJA_ENVIRONMENT.get_template('dynamic/create_match.html')
-		self.response.write(template.render(template_values))
-
-class ViewMatches(BaseHandler):
-	def get(self):
-		leagues = match.League.query()
-
-		template_values = {"leagues":leagues}
-		template = JINJA_ENVIRONMENT.get_template('dynamic/view_matches.html')
-		self.response.write(template.render(template_values))
-
 class GetReferees(BaseHandler):
 	def get(self):
 		league_key = self.request.get("league")
@@ -152,6 +160,15 @@ class GetReferees(BaseHandler):
 
 		template_values = {"referees":refs}
 		template = JINJA_ENVIRONMENT.get_template('referee.json')
+		self.response.write(template.render(template_values))
+
+class GetTeams(BaseHandler):
+	def get(self):
+		league_key = self.request.get("league")
+		league = ndb.Key(urlsafe=league_key).get()
+
+		template_values = {"teams":league.teams}
+		template = JINJA_ENVIRONMENT.get_template('teams.json')
 		self.response.write(template.render(template_values))
 
 class GetMatches(BaseHandler):

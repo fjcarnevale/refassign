@@ -1,0 +1,18 @@
+{% autoescape true %}
+[
+
+{% for team_key in teams %}
+{% set team = team_key.get() %}
+
+{
+"team":
+	{
+	"name":"{{team.name}}",
+	{% set matches = team.matches %}
+	"matches":{% include 'matches.json' %}
+	}
+}
+{% if not loop.last %},{% endif %}
+{% endfor %}
+]
+{% endautoescape %}
