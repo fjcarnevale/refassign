@@ -8,6 +8,9 @@ config['webapp2_extras.sessions'] = {
 
 application = webapp2.WSGIApplication([
 	('/', handlers.Index),
+	('/register', handlers.Register),
+	('/login', handlers.Login),
+	('/dynamic/landing_page.html', handlers.LandingPage),
 	('/add_team', handlers.AddTeam),
 	('/add_ref', handlers.AddRef),
 	('/add_field', handlers.AddField),

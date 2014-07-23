@@ -1,5 +1,8 @@
 import datetime
+import hashlib
 import os
+import random
+import string
 import urllib2
 
 from google.appengine.api import mail
@@ -9,6 +12,7 @@ import jinja2
 import webapp2
 from webapp2_extras import sessions
 
+import controllers
 import match
 
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -38,6 +42,44 @@ class Index(BaseHandler):
 	""" Handles requests to the main page """
 	def get(self):
 		matches = match.Match.query()
+
+class Register(BaseHandler):
+	def get(self):
+		email = self.request.get("email")
+		password = self.request.get("password")
+		name = self.request.get("name")
+		
+		try:
+			new_person = controllers.register_new_person(name,email,password)
+			template_values = {"success":True}
+			template = JINJA_ENVIRONMENT.get_template('dynamic/register_results.html')
+			self.response.write(template.render(template_values))
+		except Exception as e:
+			template_values = {"success":False, "error":str(e)}
+			template = JINJA_ENVIRONMENT.get_template('dynamic/register_results.html')
+			self.response.write(template.render(template_values))
+		
+
+class Login(BaseHandler):
+	def get(self):
+		email = self.request.get("email")
+		password = self.request.get("password")
+
+		try:
+			person = controllers.login_person(email,password)
+			self.session['person_email'] = person.email
+			print "Logged in as user %s" % person.name
+		except Exception as e:
+			print "Failed to login : %s" % str(e)
+
+class LandingPage(BaseHandler):
+	def get(self):
+		person_email = self.session.get('person_email', None)
+
+		if person_email is None:
+			return redirect('/static/login.html')
+
+		print "User %s is logged in" % person_email
 
 class CreateRef(BaseHandler):
 	def get(self):
@@ -80,7 +122,6 @@ class ViewMatches(BaseHandler):
 		template_values = {"leagues":leagues}
 		template = JINJA_ENVIRONMENT.get_template('dynamic/view_matches.html')
 		self.response.write(template.render(template_values))
-
 		
 class AddTeam(BaseHandler):
 	def get(self):
@@ -187,7 +228,6 @@ class GetMatches(BaseHandler):
 		template_values = {"matches":matches}
 		template = JINJA_ENVIRONMENT.get_template('matches.json')
 		self.response.write(template.render(template_values))
-
 
 
 

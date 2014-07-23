@@ -1,0 +1,18 @@
+<html>
+
+<body>
+
+{% if success == True %}
+You successfully registered!<br />
+Return to the login page to login<br />
+{% else %}
+We ran into a problem registering you.<br />
+Error : {{ error }}<br />
+{% endif %}
+
+<a href="/static/login.html">Login Page</a>
+
+</body>
+
+</html>
+
