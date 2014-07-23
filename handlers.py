@@ -68,18 +68,29 @@ class Login(BaseHandler):
 		try:
 			person = controllers.login_person(email,password)
 			self.session['person_email'] = person.email
-			print "Logged in as user %s" % person.name
+			return self.redirect("/dynamic/landing_page.html")
 		except Exception as e:
 			print "Failed to login : %s" % str(e)
 
+class Logout(BaseHandler):
+	def get(self):
+		self.session['person_email'] = None
+		return self.redirect("/static/login.html")
+
+
 class LandingPage(BaseHandler):
 	def get(self):
-		person_email = self.session.get('person_email', None)
+		email = self.session.get('person_email', None)
 
-		if person_email is None:
-			return redirect('/static/login.html')
+		if email is None:
+			return self.redirect('/static/login.html')
 
-		print "User %s is logged in" % person_email
+		person = ndb.Key(match.Person, email).get()
+
+		template_values = {"person":person}
+		template = JINJA_ENVIRONMENT.get_template('dynamic/landing_page.html')
+		self.response.write(template.render(template_values))
+		
 
 class CreateRef(BaseHandler):
 	def get(self):

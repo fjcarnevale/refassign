@@ -33,6 +33,10 @@ def register_new_person(name,email,password):
 
 def login_person(email,password):
 	person_to_login = ndb.Key(match.Person, email).get()
+
+	if person_to_login is None:
+		raise Exception("Unrecognized email")
+
 	password = salt_password(password, person_to_login.salt)[0]
 
 	if person_to_login.password == password:
