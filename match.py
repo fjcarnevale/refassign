@@ -1,14 +1,20 @@
 from google.appengine.ext import ndb
+	
+class Admin(ndb.Model):
+  leagues = ndb.KeyProperty(repeated=True)
+
+class Referee(ndb.Model):
+	grade = ndb.IntegerProperty()
+	leauges = ndb.KeyProperty(repeated=True)
 
 class Person(ndb.Model):
 	name = ndb.StringProperty()
 	email = ndb.StringProperty()
 	password = ndb.StringProperty()
 	salt = ndb.StringProperty()
-
-class Referee(Person):
-	grade = ndb.IntegerProperty()
-	leauges = ndb.KeyProperty()
+	
+	referee = ndb.StructuredProperty(Referee)
+	admin = ndb.StructuredProperty(Admin)
 
 class Field(ndb.Model):
 	name = ndb.StringProperty()
@@ -17,6 +23,7 @@ class Field(ndb.Model):
 
 class League(ndb.Model):
 	name = ndb.StringProperty()
+	admins = ndb.KeyProperty(repeated=True)
 	assigners = ndb.KeyProperty(repeated=True)
 	referees = ndb.KeyProperty(repeated=True)
 	teams = ndb.KeyProperty(repeated=True)

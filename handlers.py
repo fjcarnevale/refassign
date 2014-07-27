@@ -19,6 +19,16 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
+    
+
+def get_logged_in_user(handler):
+  email = handler.session.get('person_email', None)
+  
+  if email is None:
+    return None
+    
+  return ndb.Key(match.Person, email).get()
+
 
 # Sourced from https://webapp-improved.appspot.com/api/webapp2_extras/sessions.html
 class BaseHandler(webapp2.RequestHandler):
@@ -80,12 +90,7 @@ class Logout(BaseHandler):
 
 class LandingPage(BaseHandler):
 	def get(self):
-		email = self.session.get('person_email', None)
-
-		if email is None:
-			return self.redirect('/static/login.html')
-
-		person = ndb.Key(match.Person, email).get()
+		person = get_logged_in_user(self)
 
 		template_values = {"person":person}
 		template = JINJA_ENVIRONMENT.get_template('dynamic/landing_page.html')
@@ -117,6 +122,15 @@ class CreateMatch(BaseHandler):
 		template_values = {"teams":teams, "refs":refs, "fields":fields}
 		template = JINJA_ENVIRONMENT.get_template('dynamic/create_match.html')
 		self.response.write(template.render(template_values))
+
+class ViewLeague(BaseHandler):
+  def get(self):
+    league_key = self.request.get("league")
+    league = ndb.Key(urlsafe = league_key).get()
+    
+    template_values = {"league":league}
+    template = JINJA_ENVIRONMENT.get_template("dynamic/league_page.html")
+    self.response.write(template.render(template_values))
 
 class ViewLeagues(BaseHandler):
 	def get(self):
@@ -167,11 +181,19 @@ class AddField(BaseHandler):
 		self.response.write("Created field %s at %s" % (field.name, field.location))
 
 class AddLeague(BaseHandler):
-	def get(self):
-		league = match.League.new_league(self.request.get("name"))
-		league.put()		
-
-		self.response.write("Created league %s" % league.name)
+  def get(self):
+    #TODO move to a controller
+    person = get_logged_in_user(self)
+    league = match.League.new_league(self.request.get("name"))
+    league_key = league.put()
+    
+    if person.admin is None:
+      person.admin = match.Admin()
+    
+    person.admin.leagues.append(league_key)
+    person.put()
+    
+    self.response.write("Created league %s" % league.name)
 
 class AddMatch(BaseHandler):
 	def get(self):
@@ -184,7 +206,7 @@ class AddMatch(BaseHandler):
 			m.teams.append(ndb.Key(urlsafe=tk))
 
 		ref_key = self.request.get('ref')
-		m.referees.append(ndb.Key(urlsafe=ref_key))		
+		m.referees.append(ndb.Key(urlsafe=ref_key))
 
 		field_key = self.request.get('field')
 		m.field = ndb.Key(urlsafe=field_key)

@@ -1,0 +1,26 @@
+<html>
+<body>
+
+{{ league.name }}<br />
+
+{% if league.teams|length > 0 %}
+  {% for team_key in league.teams %}
+    {% set team = team_key.get() %}
+    {{ team.name }} | {{ team.matches|length }} matches<br />
+  {% endfor %}
+{% else %}
+  There are no teams in this league<br />
+{% endif %}
+
+<br />
+
+<form action="/add_team" method="get">
+Name: <input type="text" name="name">
+<input type="hidden" name="league" value="{{ league.key.urlsafe() }}"/>
+<input type="Submit">
+</form>
+
+
+</body>
+</html>
+

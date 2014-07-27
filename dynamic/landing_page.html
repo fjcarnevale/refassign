@@ -1,13 +1,26 @@
 <html>
 <body>
-Hi {{ person.name }}! <a href="/logout">Logout</a><br />
-<a href="/static/create_league.html">Create a League</a><br />
-<a href="/dynamic/create_team.html">Create a Team</a><br />
-<a href="/dynamic/create_ref.html">Create a Ref</a><br />
-<a href="/static/create_field.html">Create a Field</a><br />
-<a href="/dynamic/create_match.html">Create a Match</a><br />
-<a href="/dynamic/view_matches.html">View Matches</a><br />
-<a href="/dynamic/view_leagues.html">View Leagues</a><br />
+Hi {{ person.name }}! <a href="/logout">Logout</a><br /><br />
+
+My Leagues<br />
+{% if person.admin is defined and person.admin.leagues|length > 0 %}
+
+{% for league_key in person.admin.leagues %}
+{% set league = league_key.get() %}
+<a href="/dynamic/league_page.html?league={{ league.key.urlsafe() }}">{{ league.name }}</a><br />
+{% endfor %}
+
+{% else %}
+
+You are not an admin of any leagues.<br />
+
+{% endif %}
+<a href="/static/create_league.html">Create a League</a>
+
+<br />
+<br />
+
+
 </body>
 </html>
 
