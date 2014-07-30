@@ -7,25 +7,16 @@ config['webapp2_extras.sessions'] = {
 }
 
 application = webapp2.WSGIApplication([
-	('/', handlers.Index),
-	('/register', handlers.Register),
-	('/login', handlers.Login),
-	('/logout',handlers.Logout),
-	('/dynamic/landing_page.html', handlers.LandingPage),
-	('/add_team', handlers.AddTeam),
-	('/add_ref', handlers.AddRef),
-	('/add_field', handlers.AddField),
-	('/add_match', handlers.AddMatch),
-	('/add_league', handlers.AddLeague),
-	('/dynamic/create_match.html', handlers.CreateMatch),
-	('/dynamic/create_ref.html', handlers.CreateRef),
-	('/dynamic/create_team.html', handlers.CreateTeam),
-	('/dynamic/view_matches.html', handlers.ViewMatches),
-	('/dynamic/view_leagues.html', handlers.ViewLeagues),
-	('/dynamic/league_page.html', handlers.ViewLeague),
-	('/get_referees', handlers.GetReferees),
-	('/get_matches', handlers.GetMatches),
-	('/get_teams', handlers.GetTeams)
+  ('/', handlers.Index),
+  ('/register', handlers.Register),
+  ('/login', handlers.Login),
+  ('/logout',handlers.Logout),
+  ('/dynamic/landing_page.html', handlers.LandingPage),
+  ('/dynamic/league_page.html', handlers.LeaguePage),\
+  ('/dynamic/team_page.html', handlers.TeamPage),
+  ('/add_league', handlers.AddLeague),
+  ('/add_team', handlers.AddTeam),
+  ('/add_match', handlers.AddMatch)
 ], config=config, debug=True)
 
 

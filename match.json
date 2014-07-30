@@ -3,24 +3,11 @@
 "match":
 	{
 	"date":"{{match.date}}",
-	"field":
-		{
-			"name":"{{field.name}}",
-			"location":"{{field.location}}"
-		},
 	"teams":[
-			{% for team in teams %}
+			{% for team_key in match.teams %}
+			{% set team = team_key.get() %}
 				{
 				"name":"{{team.name}}"
-				}
-			{% if not loop.last %},{% endif %}
-			{% endfor %}
-		],
-	"referees":[
-			{% for ref in referees %}
-				{
-				"name":"{{ref.name}}",
-				"grade":{{ref.grade}}
 				}
 			{% if not loop.last %},{% endif %}
 			{% endfor %}

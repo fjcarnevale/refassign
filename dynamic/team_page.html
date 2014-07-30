@@ -1,0 +1,17 @@
+<html>
+<body>
+
+{{ team.name }}<br />
+
+{% if team.matches|length > 0 %}
+  {% for match_key in team.matches %}
+    {% set match = match_key.get() %}
+    {% include 'match.json' %}<br />
+  {% endfor %}
+{% else %}
+  This team has no upcoming matches.<br />
+{% endif %}
+
+</body>
+</html>
+

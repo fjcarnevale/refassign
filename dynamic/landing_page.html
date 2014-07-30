@@ -1,11 +1,11 @@
 <html>
 <body>
-Hi {{ person.name }}! <a href="/logout">Logout</a><br /><br />
+Hi {{ user.name }}! <a href="/logout">Logout</a><br /><br />
 
 My Leagues<br />
-{% if person.admin is defined and person.admin.leagues|length > 0 %}
+{% if user.admin is defined and user.admin.leagues|length > 0 %}
 
-{% for league_key in person.admin.leagues %}
+{% for league_key in user.admin.leagues %}
 {% set league = league_key.get() %}
 <a href="/dynamic/league_page.html?league={{ league.key.urlsafe() }}">{{ league.name }}</a><br />
 {% endfor %}

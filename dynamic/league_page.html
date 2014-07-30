@@ -1,25 +1,49 @@
 <html>
-<body>
+<body>
 
 {{ league.name }}<br />
 
 {% if league.teams|length > 0 %}
   {% for team_key in league.teams %}
     {% set team = team_key.get() %}
-    {{ team.name }} | {{ team.matches|length }} matches<br />
+    <a href="team_page.html?team={{ team.key.urlsafe() }}">{{ team.name }}</a> | {{ team.matches|length }} matches<br />
   {% endfor %}
 {% else %}
   There are no teams in this league<br />
 {% endif %}
 
 <br />
-
+Add a Team:
 <form action="/add_team" method="get">
 Name: <input type="text" name="name">
 <input type="hidden" name="league" value="{{ league.key.urlsafe() }}"/>
-<input type="Submit">
+<input type="Submit" value="Add">
 </form>
 
+<br />
+<br />
+
+Create a Match
+<form action="/add_match" method="get">
+
+Date: <input type="datetime-local" name="date"><br />
+
+Team 1: <select name="team">
+{% for team_key in league.teams %}
+{% set team = team_key.get() %}
+<option value="{{team.key.urlsafe()}}">{{team.name}}</option>
+{% endfor %}
+</select><br />
+
+Team 2: <select name="team">
+{% for team_key in league.teams %}
+{% set team = team_key.get() %}
+<option value="{{team.key.urlsafe()}}">{{team.name}}</option>
+{% endfor %}
+</select><br />
+
+<input type="Submit">
+</form>
 
 </body>
 </html>
