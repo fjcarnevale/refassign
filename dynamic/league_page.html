@@ -53,6 +53,30 @@
 </tr>
 </table>
 
+<h4>Referees</h4>
+
+<table>
+{% for referee_key in league.referees %}
+  {% set user = referee_key.get() %}
+  
+  <tr>
+    <td>{{ user.name }}</td>
+  </tr>
+  
+{% endfor %}
+<tr>
+  <form action="/add_referee" method="get">
+  <td>
+    <input type="text" name="email" placeholder="email">
+  </td>
+  <td>
+    <input type="hidden" name="league" value="{{ league.key.urlsafe() }}"/>
+    <input type="Submit" value="Add">
+  </td>
+  </form>
+</tr>
+</table>
+
 <br />
 <br />
 <br />

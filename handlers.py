@@ -145,6 +145,18 @@ class AddField(BaseHandler):
     
     self.response.write("Created field %s in league %s" % (self.request.get("name"), league.name))
     
+class AddReferee(BaseHandler):
+  def get(self):
+    league_key = ndb.Key(urlsafe = self.request.get("league"))
+    league = league_key.get()
+    
+    email = self.request.get("email")
+    user = ndb.Key(match.User, email).get()
+    
+    league_controller.add_referee_to_league(league,user)
+    
+    self.response.write("Added user %s as a referee for league %s" % (user.name, league.name))
+    
 class AddMatch(BaseHandler):
   def get(self):
     date = datetime.datetime.strptime(self.request.get("date"), "%Y-%m-%dT%H:%M")

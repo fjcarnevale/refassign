@@ -45,3 +45,14 @@ def create_field(league, name, location):
   league.put()
   
   return new_field
+  
+def add_referee_to_league(league, user):
+  league.referees.append(user.key)
+  league.put()
+  
+  if user.referee is None:
+    user.referee = match.Referee()
+    user.referee.grade = 0
+    
+  user.referee.leagues.append(league.key)
+  user.put()

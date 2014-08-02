@@ -26,7 +26,7 @@ def register_new_user(name,email,password):
 	(password,salt) = salt_password(password)
 
 	new_user = match.User(id=email)
-	new_user.populate(name=name, email=email, password=password, salt=salt, admin=match.Admin())
+	new_user.populate(name=name, email=email, password=password, salt=salt, admin=match.Admin(), referee=match.Referee())
 	new_user.put()
 
 	return new_user

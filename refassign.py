@@ -17,6 +17,7 @@ application = webapp2.WSGIApplication([
   ('/add_league', handlers.AddLeague),
   ('/add_team', handlers.AddTeam),
   ('/add_field', handlers.AddField),
+  ('/add_referee', handlers.AddReferee),
   ('/add_match', handlers.AddMatch)
 ], config=config, debug=True)
 
