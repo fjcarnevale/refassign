@@ -27,6 +27,7 @@ class League(ndb.Model):
   assigners = ndb.KeyProperty(repeated=True)
   referees = ndb.KeyProperty(repeated=True)
   teams = ndb.KeyProperty(repeated=True)
+  fields = ndb.KeyProperty(repeated=True)
   # maybe the league should also hold matches,
   # otherwise may have to watch out for duplicates when retreiving from teams
 

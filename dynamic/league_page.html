@@ -1,25 +1,59 @@
 <html>
 <body>
 
-{{ league.name }}<br />
+<center><h3>{{ league.name }}</h3></center>
 
-{% if league.teams|length > 0 %}
-  {% for team_key in league.teams %}
-    {% set team = team_key.get() %}
-    <a href="team_page.html?team={{ team.key.urlsafe() }}">{{ team.name }}</a> | {{ team.matches|length }} matches<br />
-  {% endfor %}
-{% else %}
-  There are no teams in this league<br />
-{% endif %}
+<h4>Teams</h4>
+
+<table>
+{% for team_key in league.teams %}
+  {% set team = team_key.get() %}
+  <tr>
+  <td><a href="team_page.html?team={{ team.key.urlsafe() }}">{{ team.name }}</a><br /></td>
+  <td>{{ team.matches|length }} matches</td>
+  </tr>
+{% endfor %}
+<tr>
+  <td>
+    <form action="/add_team" method="get">
+    <input type="text" name="name" placeholder="name">
+    <input type="hidden" name="league" value="{{ league.key.urlsafe() }}"/>
+    <input type="Submit" value="Add">
+    </form>
+  </td>
+</tr>
+</table>
+
+
+<h4>Fields</h4>
+
+<table>
+{% for field_key in league.fields %}
+  {% set field = field_key.get() %}
+  
+  <tr>
+    <td>{{ field.name }}</td>
+    <td>{{ field.location }}</td>
+  </tr>
+  
+{% endfor %}
+<tr>
+  <form action="/add_field" method="get">
+  <td>
+    <input type="text" name="name" placeholder="name">
+  </td>
+  <td>
+    <input type="text" name="location" placeholder="location">
+  </td>
+  <td>
+    <input type="hidden" name="league" value="{{ league.key.urlsafe() }}"/>
+    <input type="Submit" value="Add">
+  </td>
+  </form>
+</tr>
+</table>
 
 <br />
-Add a Team:
-<form action="/add_team" method="get">
-Name: <input type="text" name="name">
-<input type="hidden" name="league" value="{{ league.key.urlsafe() }}"/>
-<input type="Submit" value="Add">
-</form>
-
 <br />
 <br />
 
@@ -40,6 +74,13 @@ Team 2: <select name="team">
 {% set team = team_key.get() %}
 <option value="{{team.key.urlsafe()}}">{{team.name}}</option>
 {% endfor %}
+</select><br />
+
+Field: <select name="field">
+  {% for field_key in league.fields %}
+  {% set field = field_key.get() %}
+  <option value="{{ field_key.urlsafe() }}">{{ field.name }}</option>
+  {% endfor %}
 </select><br />
 
 <input type="Submit">

@@ -27,7 +27,7 @@ def create_new_league(name, admins=[], assigners=[], referees=[], teams=[]):
     
 def create_match(teams, date, referees=[], field=None):
   new_match = match.Match()
-  new_match.populate(date=date, teams=[team.key for team in teams])
+  new_match.populate(date=date, teams=[team.key for team in teams], referees=referees, field=field.key)
   match_key = new_match.put()
   
   for team in teams:
@@ -35,3 +35,13 @@ def create_match(teams, date, referees=[], field=None):
     team.put()
   
   return new_match
+  
+def create_field(league, name, location):
+  new_field = match.Field()
+  new_field.populate(name=name, location=location)
+  new_field_key = new_field.put()
+  
+  league.fields.append(new_field_key)
+  league.put()
+  
+  return new_field

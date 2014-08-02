@@ -3,6 +3,13 @@
 "match":
 	{
 	"date":"{{match.date}}",
+	
+	{% if match.field != None %}
+	"field":"{{match.field.get().name}}",
+	{% else %}
+	"field":None,
+	{% endif %}
+	
 	"teams":[
 			{% for team_key in match.teams %}
 			{% set team = team_key.get() %}
@@ -12,6 +19,7 @@
 			{% if not loop.last %},{% endif %}
 			{% endfor %}
 		]
+		
 	}
 }
 {% endautoescape %}

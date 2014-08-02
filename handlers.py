@@ -133,14 +133,29 @@ class AddTeam(BaseHandler):
     
     self.response.write("Created team %s in league %s" % (self.request.get("name"), league.name))
     
+class AddField(BaseHandler):
+  def get(self):
+    league_key = ndb.Key(urlsafe = self.request.get("league"))
+    league = league_key.get()
+    
+    name = self.request.get("name")
+    location = self.request.get("location")
+    
+    field = league_controller.create_field(league, name, location)
+    
+    self.response.write("Created field %s in league %s" % (self.request.get("name"), league.name))
+    
 class AddMatch(BaseHandler):
   def get(self):
     date = datetime.datetime.strptime(self.request.get("date"), "%Y-%m-%dT%H:%M")
 
     team_keys = self.request.get('team', allow_multiple=True)
     teams = [ndb.Key(urlsafe=team_key).get() for team_key in team_keys]
+    
+    field_key = self.request.get('field')
+    field = ndb.Key(urlsafe=field_key).get()
 
-    match = league_controller.create_match(teams, date)
+    match = league_controller.create_match(teams, date, [], field)
 
     template_values = {"match":match}
     template = JINJA_ENVIRONMENT.get_template('match.json')
