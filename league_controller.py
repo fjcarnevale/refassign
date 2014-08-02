@@ -25,10 +25,13 @@ def create_new_league(name, admins=[], assigners=[], referees=[], teams=[]):
     
     return league
     
-def create_match(teams, date, referees=[], field=None):
+def create_match(league, teams, date, referees=[], field=None):
   new_match = match.Match()
   new_match.populate(date=date, teams=[team.key for team in teams], referees=referees, field=field.key)
   match_key = new_match.put()
+  
+  league.matches.append(match_key)
+  league.put()
   
   for team in teams:
     team.matches.append(match_key)
@@ -56,3 +59,4 @@ def add_referee_to_league(league, user):
     
   user.referee.leagues.append(league.key)
   user.put()
+  

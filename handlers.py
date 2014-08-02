@@ -52,7 +52,10 @@ class BaseHandler(webapp2.RequestHandler):
 class Index(BaseHandler):
   """ Handles requests to the main page """
   def get(self):
-    return self.redirect("/static/login.html")
+    if get_logged_in_user(self) is None:
+      return self.redirect("/static/login.html")
+    else:
+      return self.redirect("/dynamic/landing_page.html")
 
 class Register(BaseHandler):
   def get(self):
@@ -117,7 +120,6 @@ class TeamPage(BaseHandler):
 
 class AddLeague(BaseHandler):
   def get(self):
-    #TODO move to a controller
     user = get_logged_in_user(self)
     name = self.request.get("name")
     league = league_controller.create_new_league(self.request.get("name"), admins=[user])
@@ -166,8 +168,11 @@ class AddMatch(BaseHandler):
     
     field_key = self.request.get('field')
     field = ndb.Key(urlsafe=field_key).get()
+    
+    league_key = self.request.get('league')
+    league = ndb.Key(urlsafe=league_key).get()
 
-    match = league_controller.create_match(teams, date, [], field)
+    match = league_controller.create_match(league, teams, date, [], field)
 
     template_values = {"match":match}
     template = JINJA_ENVIRONMENT.get_template('match.json')

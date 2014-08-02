@@ -77,38 +77,63 @@
 </tr>
 </table>
 
-<br />
-<br />
-<br />
+<h4>Matches</h4>
 
-Create a Match
+<table>
+{% for match_key in league.matches %}
+  {% set match = match_key.get() %}
+  
+  <tr>
+    <td>{{ match.date }}</td>
+    {% for team_key in match.teams %}
+      {% set team = team_key.get() %}
+      <td>{{ team.name }}</td>
+    {% endfor %}
+  </tr>
+  
+{% endfor %}
+
+<tr>
 <form action="/add_match" method="get">
-
-Date: <input type="datetime-local" name="date"><br />
-
-Team 1: <select name="team">
-{% for team_key in league.teams %}
-{% set team = team_key.get() %}
-<option value="{{team.key.urlsafe()}}">{{team.name}}</option>
-{% endfor %}
-</select><br />
-
-Team 2: <select name="team">
-{% for team_key in league.teams %}
-{% set team = team_key.get() %}
-<option value="{{team.key.urlsafe()}}">{{team.name}}</option>
-{% endfor %}
-</select><br />
-
-Field: <select name="field">
-  {% for field_key in league.fields %}
-  {% set field = field_key.get() %}
-  <option value="{{ field_key.urlsafe() }}">{{ field.name }}</option>
-  {% endfor %}
-</select><br />
-
-<input type="Submit">
+  <td>
+    <input type="datetime-local" name="date">
+  </td>
+  
+  <td>
+    <select name="team">
+      {% for team_key in league.teams %}
+      {% set team = team_key.get() %}
+      <option value="{{team.key.urlsafe()}}">{{team.name}}</option>
+      {% endfor %}
+    </select>
+  </td>
+  
+  <td>
+    <select name="team">
+      {% for team_key in league.teams %}
+      {% set team = team_key.get() %}
+      <option value="{{team.key.urlsafe()}}">{{team.name}}</option>
+      {% endfor %}
+    </select>
+  </td>
+  
+  <td>
+    <select name="field">
+      {% for field_key in league.fields %}
+      {% set field = field_key.get() %}
+      <option value="{{ field_key.urlsafe() }}">{{ field.name }}</option>
+      {% endfor %}
+    </select>
+  </td>
+  
+  <td>
+    <input type="hidden" name="league" value="{{ league.key.urlsafe() }}"/>
+    <input type="Submit">
+  </td>
 </form>
+</tr>
+</table>
+
 
 </body>
 </html>
