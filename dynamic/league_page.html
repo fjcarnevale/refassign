@@ -60,7 +60,7 @@
   {% set user = referee_key.get() %}
   
   <tr>
-    <td>{{ user.name }}</td>
+    <td><a href="/dynamic/referee_page.html?user={{user.key.urlsafe()}}">{{ user.name }}</a></td>
   </tr>
   
 {% endfor %}
@@ -99,7 +99,12 @@
       <td>{{ team.name }}</td>
     {% endfor %}
     <td>{{ match.field.get().name }}</td>
-    <td>{{ match.referees[0].get().name }}</td>
+    <td>
+    {% for referee_key in match.referees %}
+      {% set referee = referee_key.get() %}
+      {{ referee.name }},
+    {% endfor %}
+    </td>
     <td><a href="/cancel_match?match={{match_key.urlsafe()}}">X</a></td>
   </tr>
   
