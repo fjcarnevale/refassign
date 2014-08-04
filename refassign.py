@@ -12,13 +12,15 @@ application = webapp2.WSGIApplication([
   ('/login', handlers.Login),
   ('/logout',handlers.Logout),
   ('/dynamic/landing_page.html', handlers.LandingPage),
-  ('/dynamic/league_page.html', handlers.LeaguePage),\
+  ('/dynamic/league_page.html', handlers.LeaguePage),
   ('/dynamic/team_page.html', handlers.TeamPage),
+  ('/dynamic/referee_page.html', handlers.RefereePage),
   ('/add_league', handlers.AddLeague),
   ('/add_team', handlers.AddTeam),
   ('/add_field', handlers.AddField),
   ('/add_referee', handlers.AddReferee),
-  ('/add_match', handlers.AddMatch)
+  ('/add_match', handlers.AddMatch),
+  ('/cancel_match', handlers.CancelMatch)
 ], config=config, debug=True)
 
 

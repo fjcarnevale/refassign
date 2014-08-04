@@ -84,7 +84,7 @@ class Login(BaseHandler):
       self.session['user_email'] = user.email
       return self.redirect("/dynamic/landing_page.html")
     except Exception as e:
-      print "Failed to login : %s" % str(e)
+      self.response.write("Failed to login : %s" % str(e))
 
 class Logout(BaseHandler):
   def get(self):
@@ -117,6 +117,17 @@ class TeamPage(BaseHandler):
     template = JINJA_ENVIRONMENT.get_template("dynamic/team_page.html")
     self.response.write(template.render(template_values))
     
+
+class RefereePage(BaseHandler):
+  def get(self):
+    user_key = self.request.get("user")
+    user = ndb.Key(urlsafe = user_key).get()
+    
+    print "User has %d matches" % len(user.referee.matches)
+    
+    template_values = {"user":user}
+    template = JINJA_ENVIRONMENT.get_template("dynamic/referee_page.html")
+    self.response.write(template.render(template_values))
 
 class AddLeague(BaseHandler):
   def get(self):
@@ -169,14 +180,26 @@ class AddMatch(BaseHandler):
     field_key = self.request.get('field')
     field = ndb.Key(urlsafe=field_key).get()
     
+    referee_keys = self.request.get('referee', allow_multiple=True)
+    referees = [ndb.Key(urlsafe=referee_key).get() for referee_key in referee_keys]
+    
     league_key = self.request.get('league')
     league = ndb.Key(urlsafe=league_key).get()
 
-    match = league_controller.create_match(league, teams, date, [], field)
+    match = league_controller.create_match(league, teams, date, referees, field)
 
     template_values = {"match":match}
     template = JINJA_ENVIRONMENT.get_template('match.json')
     self.response.write(template.render(template_values))
+    
+class CancelMatch(BaseHandler):
+  def get(self):
+    match_key = self.request.get("match")
+    match = ndb.Key(urlsafe=match_key).get()
+    
+    league_controller.cancel_match(match)
+    
+    self.redirect(self.request.referrer)
 
 
 

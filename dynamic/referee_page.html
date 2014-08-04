@@ -1,0 +1,43 @@
+<html>
+<body>
+
+<center><h3>{{ user.name }}</h3></center>
+
+<h4>Matches</h4>
+
+<table>
+
+<tr>
+  <th>Date</th>
+  <th>Home</th>
+  <th>Away</th>
+  <th>Field</th>
+  <th>Referee</th>
+</tr>
+
+{% for match_key in user.referee.matches %}
+  {% set match = match_key.get() %}
+  
+  <tr>
+    <td>{{ match.date }}</td>
+    {% for team_key in match.teams %}
+      {% set team = team_key.get() %}
+      <td>{{ team.name }}</td>
+    {% endfor %}
+    <td>{{ match.field.get().name }}</td>
+    
+    <td>
+    {% for referee_key in match.referees %}
+      {% set referee = referee_key.get() %}
+      {{ referee.name }},
+    {% endfor %}
+    </td>
+  </tr>
+  
+{% endfor %}
+</table>
+
+
+</body>
+</html>
+

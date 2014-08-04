@@ -27,7 +27,7 @@ def create_new_league(name, admins=[], assigners=[], referees=[], teams=[]):
     
 def create_match(league, teams, date, referees=[], field=None):
   new_match = match.Match()
-  new_match.populate(date=date, teams=[team.key for team in teams], referees=referees, field=field.key)
+  new_match.populate(league=league.key, date=date, teams=[team.key for team in teams], referees=[referee.key for referee in referees], field=field.key)
   match_key = new_match.put()
   
   league.matches.append(match_key)
@@ -36,8 +36,30 @@ def create_match(league, teams, date, referees=[], field=None):
   for team in teams:
     team.matches.append(match_key)
     team.put()
+    
+  for referee in referees:
+    referee.referee.matches.append(match_key)
+    referee.put()
   
   return new_match
+  
+def cancel_match(match):
+  league = match.league.get()
+  league.matches.remove(match.key)
+  league.put()
+  
+  for team_key in match.teams:
+    team = team_key.get()
+    team.matches.remove(match.key)
+    team.put()
+    
+  for referee_key in match.referees:
+    referee = referee_key.get()
+    referee.referee.matches.remove(match.key)
+    referee.put()
+    
+  match.key.delete()
+  
   
 def create_field(league, name, location):
   new_field = match.Field()
@@ -51,12 +73,15 @@ def create_field(league, name, location):
   
 def add_referee_to_league(league, user):
   league.referees.append(user.key)
-  league.put()
   
   if user.referee is None:
     user.referee = match.Referee()
     user.referee.grade = 0
     
   user.referee.leagues.append(league.key)
+  
+  league.put()
   user.put()
+  
+
   

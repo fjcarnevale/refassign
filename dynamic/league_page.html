@@ -80,6 +80,15 @@
 <h4>Matches</h4>
 
 <table>
+
+<tr>
+  <th>Date</th>
+  <th>Home</th>
+  <th>Away</th>
+  <th>Field</th>
+  <th>Referee</th>
+</tr>
+
 {% for match_key in league.matches %}
   {% set match = match_key.get() %}
   
@@ -89,6 +98,9 @@
       {% set team = team_key.get() %}
       <td>{{ team.name }}</td>
     {% endfor %}
+    <td>{{ match.field.get().name }}</td>
+    <td>{{ match.referees[0].get().name }}</td>
+    <td><a href="/cancel_match?match={{match_key.urlsafe()}}">X</a></td>
   </tr>
   
 {% endfor %}
@@ -122,6 +134,15 @@
       {% for field_key in league.fields %}
       {% set field = field_key.get() %}
       <option value="{{ field_key.urlsafe() }}">{{ field.name }}</option>
+      {% endfor %}
+    </select>
+  </td>
+  
+  <td>
+    <select multiple name="referee">
+      {% for referee_key in league.referees %}
+      {% set referee = referee_key.get() %}
+      <option value="{{ referee_key.urlsafe() }}">{{ referee.name }}</option>
       {% endfor %}
     </select>
   </td>

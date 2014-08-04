@@ -5,7 +5,8 @@ class Admin(ndb.Model):
 
 class Referee(ndb.Model):
   grade = ndb.IntegerProperty()
-  leauges = ndb.KeyProperty(repeated=True)
+  leagues = ndb.KeyProperty(repeated=True)
+  matches = ndb.KeyProperty(repeated=True)
 
 class User(ndb.Model):
   name = ndb.StringProperty()
@@ -56,6 +57,7 @@ class Match(ndb.Model):
   field = ndb.KeyProperty()
   teams = ndb.KeyProperty(repeated=True)
   referees = ndb.KeyProperty(repeated=True)
+  league = ndb.KeyProperty()
 
 
 
